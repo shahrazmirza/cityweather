@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import axios from "axios"; // Import axios
 import clear from "../../../public/Images/clear.png";
 import clouds from "../../../public/Images/clouds.png";
 import drizzle from "../../../public/Images/drizzle.png";
@@ -17,22 +18,27 @@ function Card() {
 
   const getWeatherData = async (city) => {
     try {
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?appid=${process.env.NEXT_PUBLIC_WEATHER_API_KEY}&units=metric&q=${city}`
+      const response = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather`,
+        {
+          params: {
+            q: city,
+            appid: process.env.NEXT_PUBLIC_WEATHER_API_KEY,
+            units: "metric",
+          },
+        }
       );
 
-      if (response.status === 404) {
-        setError("City not found");
-        setWeatherData(null);
-      } else {
-        const data = await response.json();
-        setWeatherData(data);
-        setError(null);
-      }
+      setWeatherData(response.data);
+      setError(null);
     } catch (error) {
-      console.error(error);
-      setError("An error occurred while fetching the data.");
+      if (error.response && error.response.status === 404) {
+        setError("City not found");
+      } else {
+        setError("An error occurred while fetching the data.");
+      }
       setWeatherData(null);
+      console.error(error);
     }
   };
 
