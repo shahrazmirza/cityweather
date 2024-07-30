@@ -15,12 +15,10 @@ function Card() {
   const [weatherData, setWeatherData] = useState(null);
   const [error, setError] = useState(null);
 
-  const API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
-
   const getWeatherData = async (city) => {
     try {
       const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?appid=${API_KEY}&units=metric&q=${city}`
+        `https://api.openweathermap.org/data/2.5/weather?appid=${process.env.NEXT_PUBLIC_WEATHER_API_KEY}&units=metric&q=${city}`
       );
 
       if (response.status === 404) {
