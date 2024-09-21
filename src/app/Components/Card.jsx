@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import axios from "axios"; // Import axios
+import React, { useState } from "react";
+import axios from "axios";
 import clear from "../../../public/Images/clear.png";
 import clouds from "../../../public/Images/clouds.png";
 import drizzle from "../../../public/Images/drizzle.png";
@@ -10,30 +10,39 @@ import mist from "../../../public/Images/mist.png";
 import rain from "../../../public/Images/rain.png";
 import snow from "../../../public/Images/snow.png";
 import wind from "../../../public/Images/wind.png";
+import { MdMyLocation } from "react-icons/md";
 
 function Card() {
   const [cityName, setCityName] = useState("");
   const [weatherData, setWeatherData] = useState(null);
   const [error, setError] = useState(null);
 
-  const getWeatherData = async (city) => {
+  const getWeatherData = async (city, lat, lon) => {
     try {
+      const params = {
+        appid: process.env.NEXT_PUBLIC_WEATHER_API_KEY,
+        units: "metric",
+      };
+
+      if (lat && lon) {
+        params.lat = lat;
+        params.lon = lon;
+      } else if (city) {
+        params.q = city;
+      } else {
+        throw new Error("No city or coordinates provided");
+      }
+
       const response = await axios.get(
         `https://api.openweathermap.org/data/2.5/weather`,
-        {
-          params: {
-            q: city,
-            appid: process.env.NEXT_PUBLIC_WEATHER_API_KEY,
-            units: "metric",
-          },
-        }
+        { params }
       );
 
       setWeatherData(response.data);
       setError(null);
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        setError("City not found");
+        setError("Location not found");
       } else {
         setError("An error occurred while fetching the data.");
       }
@@ -51,6 +60,50 @@ function Card() {
     }
   };
 
+  const handleLocationClick = async () => {
+    if (navigator.geolocation) {
+      try {
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+        const { latitude, longitude } = position.coords;
+
+        const response = await axios.get(
+          "https://nominatim.openstreetmap.org/reverse",
+          {
+            params: {
+              format: "jsonv2",
+              lat: latitude,
+              lon: longitude,
+            },
+          }
+        );
+
+        const address = response.data.address;
+        const suburb =
+          address.suburb ||
+          address.neighbourhood ||
+          address.village ||
+          address.town ||
+          address.city ||
+          address.county;
+
+        if (suburb) {
+          setCityName(suburb);
+          getWeatherData(null, latitude, longitude);
+          setError(null);
+        } else {
+          setError("Unable to determine suburb from your location.");
+        }
+      } catch (error) {
+        console.error(error);
+        setError("Unable to retrieve your location.");
+      }
+    } else {
+      setError("Geolocation is not supported by this browser.");
+    }
+  };
+
   return (
     <div className="flex flex-col gap-5 justify-center items-center p-10 shadow-2xl border border-cyan-500 w-fit rounded-3xl md:h-auto h-screen">
       <label className="input md:w-[400px] flex items-center gap-2 rounded-3xl bg-white text-cyan-50">
@@ -61,6 +114,9 @@ function Card() {
           value={cityName}
           onChange={(e) => setCityName(e.target.value)}
         />
+        <div className="text-gray-800" onClick={handleLocationClick}>
+          <MdMyLocation />
+        </div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 16 16"
