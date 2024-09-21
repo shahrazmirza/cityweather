@@ -113,7 +113,9 @@ function Card() {
           placeholder="Enter a city name to know the weather"
           value={cityName}
           onChange={(e) => setCityName(e.target.value)}
+          autoComplete="off"
         />
+
         <div className="text-gray-800" onClick={handleLocationClick}>
           <MdMyLocation />
         </div>
