@@ -105,7 +105,7 @@ function Card() {
   };
 
   return (
-    <div className="flex flex-col gap-5 justify-center items-center p-10 shadow-2xl border border-cyan-500 w-fit rounded-3xl md:h-auto h-screen">
+    <div className="flex flex-col justify-center items-center md:p-10 p-5 shadow-2xl border border-cyan-500 w-fit rounded-3xl h-auto">
       <label className="input md:w-[400px] flex items-center gap-2 rounded-3xl bg-white text-cyan-50">
         <input
           type="text"
@@ -152,12 +152,12 @@ function Card() {
                 : clear
             }
             alt="weather image"
-            className="md:w-44 w-40"
+            className="md:w-44 w-40 pt-5"
           />
-          <h1 className="text-cyan-50 md:text-7xl text-5xl font-medium">
+          <h1 className="text-cyan-50 md:text-7xl text-5xl font-medium pt-5">
             {Math.round(weatherData.main.temp)}°c
           </h1>
-          <h2 className="text-cyan-50 md:text-5xl text-3xl">
+          <h2 className="text-cyan-50 md:text-5xl text-3xl pt-5">
             {weatherData.name}
           </h2>
           <div className="flex justify-between md:w-[400px] pt-10 md:px-5 md:gap-0 gap-10">
