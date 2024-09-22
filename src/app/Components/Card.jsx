@@ -105,7 +105,7 @@ function Card() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center md:p-10 m-5 p-5 shadow-2xl border border-cyan-500 w-fit rounded-3xl h-auto">
+    <div className="flex flex-col justify-center items-center md:p-10 p-5 m-5 shadow-2xl border border-cyan-500 md:w-fit w-screen rounded-3xl h-auto">
       <label className="input md:w-[400px] flex items-center gap-2 rounded-3xl bg-white text-cyan-50">
         <input
           type="text"
